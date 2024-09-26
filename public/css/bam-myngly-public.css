@@ -1,4 +1,48 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
+/* Grid layout for two columns */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-grid .form-group {
+    width: 100%;
+}
+
+/* Full width for the submit button */
+.form-grid button {
+    grid-column: span 2;
+}
+
+/* Responsive - One column layout on small screens */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid button {
+        grid-column: span 1;
+    }
+}
+
+
+textarea#about_me {
+    width: 100%;
+    height: 100px;
+    resize: none;  /* Elimina la opción de redimensionar */
+}
+
+.select2-container {
+    width: 100% !important;
+}
+
+button.btn {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.swal2-input {
+    font-size: 18px;
+    text-align: center;
+}
+

@@ -53,7 +53,11 @@ class Bam_Myngly_Admin
 
 		$this->bam_myngly = $bam_myngly;
 		$this->version = $version;
+		add_action('admin_menu', [$this, 'bam_myngly_admin_menu']);
+		add_action('admin_init', [$this, 'bam_myngly_register_settings']);
 	}
+
+
 
 	/**
 	 * Register the stylesheets for the admin area.
@@ -99,5 +103,90 @@ class Bam_Myngly_Admin
 		 */
 
 		wp_enqueue_script($this->bam_myngly, plugin_dir_url(__FILE__) . 'js/bam-myngly-admin.js', array('jquery'), $this->version, false);
+	}
+
+	public function bam_myngly_admin_menu()
+	{
+		add_menu_page(
+			'Myngly Settings',   // Page title
+			'Myngly Settings',   // Menu title
+			'manage_options',    // Capability
+			'bam-myngly-settings',  // Menu slug
+			[$this, 'bam_myngly_settings_page'],  // Callback to display content
+			'dashicons-admin-generic',  // Icon
+			110  // Position in the menu
+		);
+	}
+
+	public function bam_myngly_settings_page()
+	{
+?>
+		<div class="wrap">
+			<h1>Myngly API Settings</h1>
+			<form method="post" action="options.php">
+				<?php
+				settings_fields('bam-myngly-settings-group');
+				do_settings_sections('bam-myngly-settings');
+				submit_button();
+				?>
+			</form>
+		</div>
+<?php
+	}
+
+	public function bam_myngly_register_settings()
+	{
+		register_setting('bam-myngly-settings-group', 'bam_myngly_api_url');
+		register_setting('bam-myngly-settings-group', 'bam_myngly_api_token');
+		register_setting('bam-myngly-settings-group', 'bam_myngly_linkedin_token');
+
+		add_settings_section(
+			'bam_myngly_section',
+			'API Configuration',
+			null,
+			'bam-myngly-settings'
+		);
+
+		add_settings_field(
+			'bam_myngly_api_url',
+			'API URL',
+			[$this, 'bam_myngly_api_url_field'],
+			'bam-myngly-settings',
+			'bam_myngly_section'
+		);
+
+		add_settings_field(
+			'bam_myngly_api_token',
+			'API Token',
+			[$this, 'bam_myngly_api_token_field'],
+			'bam-myngly-settings',
+			'bam_myngly_section'
+		);
+
+		add_settings_field(
+			'bam_myngly_linkedin_token',
+			'LinkedIn Token',
+			[$this, 'bam_myngly_linkedin_token_field'],
+			'bam-myngly-settings',
+			'bam_myngly_section'
+		);
+	}
+
+	public function bam_myngly_api_url_field()
+	{
+		$value = esc_url(get_option('bam_myngly_api_url', ''));
+		echo '<input type="url" name="bam_myngly_api_url" value="' . $value . '" class="regular-text">';
+	}
+
+	public function bam_myngly_api_token_field()
+	{
+		$value = esc_attr(get_option('bam_myngly_api_token', ''));
+		echo '<input type="text" name="bam_myngly_api_token" value="' . $value . '" class="regular-text">';
+	}
+
+	public function bam_myngly_linkedin_token_field()
+	{
+		$value = esc_attr(get_option('bam_myngly_linkedin_token', ''));
+		echo '<input type="text" name="bam_myngly_linkedin_token" value="' . $value . '" class="regular-text">';
 	}
 }
