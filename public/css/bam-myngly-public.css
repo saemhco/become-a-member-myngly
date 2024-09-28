@@ -9,8 +9,8 @@
     width: 100%;
 }
 
-/* Full width for the submit button */
-.form-grid button {
+/* Make the Submit button and About Me full width */
+.form-grid button, .form-group[style*="grid-column: span 2"] {
     grid-column: span 2;
 }
 
@@ -25,13 +25,11 @@
     }
 }
 
-
 textarea#about_me {
     width: 100%;
     height: 100px;
     resize: none;  /* Elimina la opción de redimensionar */
 }
-
 
 button.btn {
     padding: 10px 20px;
@@ -43,10 +41,7 @@ button.btn {
     text-align: center;
 }
 
-
 .select2-selection {
     min-height: 37px;
     height: auto;  
 }
-
-

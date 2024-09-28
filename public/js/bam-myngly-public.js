@@ -1,373 +1,218 @@
 (function($) {
     'use strict';
 
-	// Fetch country codes from the API
-    fetch(apiConfig.apiBaseUrl + '/api/typ/countries/phone-codes')
-        .then(response => response.json())
-        .then(data => {
-            const phoneCodeSelect = document.getElementById('phone_code');
-            Object.keys(data.data).forEach(code => {
-                const option = document.createElement('option');
-                option.value = code;
-                option.text = data.data[code];
-                phoneCodeSelect.appendChild(option);
-            });
+    // Local storage for data
+    let educationLevels = [];
+    let phoneCodes = [];
+
+    // Generic function to initialize Select2 with backend search
+    function initSelect2WithBackendSearch(selector, endpoint, searchKey = 'search', idKey = 'id', textKey = 'name', placeholder, multiple = false, maxSelectionLength = null) {
+        $(selector).select2({
+            placeholder: placeholder || $(selector).data('placeholder'),
+            width: '100%',
+            multiple: multiple, // Allow multiple selections if true
+            maximumSelectionLength: maxSelectionLength, // Limit selection if provided
+            ajax: {
+                url: function(params) {
+                    return `${apiConfig.apiBaseUrl}${endpoint}?${searchKey}=${params.term || ''}`;
+                },
+                delay: 250,
+                processResults: function(data) {
+                    return {
+                        results: data.data.map(function(item) {
+                            return {
+                                id: item[idKey],
+                                text: item[textKey]
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 0,
+            allowClear: true,
+            dropdownAutoWidth: true // Ensure dropdown fits the width of the container
         });
+    }
 
-    // Initialize Select2 for "Lives In" and "From" fields
-    $('#lives_in, #from').select2({
-        placeholder: 'Search for a city...',
-        width: 'resolve',  // Adjust width to match the form control
-        ajax: {
-            url: function(params) {
-                return `${apiConfig.apiBaseUrl}/api/typ/list-cities?search=${params.term || ''}`;  // Empty search on page load
-            },
-            delay: 250, // Delay before sending the request
-            processResults: function(data) {
-                return {
-                    results: data.data.map(function(city) {
-                        return {
-                            id: `${city.name}, ${city.state_iso_code}`,
-                            text: `${city.name}, ${city.state_iso_code}`
-                        };
-                    })
-                };
-            },
-            cache: true
-        },
-        minimumInputLength: 0 // Allow search with no input (default cities)
-    });
-
-	// Initialize Select2 for "Job Title" with dynamic job data
-    $('#job_title').select2({
-        placeholder: 'Search for a job title...',
-        width: 'resolve',
-        ajax: {
-            url: function(params) {
-                return `${apiConfig.apiBaseUrl}/api/typ/list-jobs?search=${params.term || ''}`;
-            },
-            delay: 250,
-            processResults: function(data) {
-                return {
-                    results: data.data.map(function(job) {
-                        return {
-                            id: job.name,
-                            text: job.name
-                        };
-                    })
-                };
-            },
-            cache: true
-        },
-        minimumInputLength: 0
-    });
-// Initialize Select2 for "Company" with dynamic company data
-    $('#company').select2({
-        placeholder: 'Search for a company...',
-        width: 'resolve',
-        ajax: {
-            url: function(params) {
-                return `${apiConfig.apiBaseUrl}/api/companies/search?query=${params.term || ''}`;
-            },
-            delay: 250,
-            processResults: function(data) {
-                return {
-                    results: data.data.map(function(company) {
-                        return {
-                            id: company.name,
-                            text: company.name
-                        };
-                    })
-                };
-            },
-            cache: true
-        },
-        minimumInputLength: 0
-    });
-
-	// Initialize Select2 for "Education" with dynamic university data
-    $('#education').select2({
-        placeholder: 'Search for a university...',
-        width: 'resolve',
-        ajax: {
-            url: function(params) {
-                return `${apiConfig.apiBaseUrl}/api/typ/list-universities?search=${params.term || ''}`;
-            },
-            delay: 250,
-            processResults: function(data) {
-                return {
-                    results: data.data.map(function(university) {
-                        return {
-                            id: university.name,
-                            text: university.name
-                        };
-                    })
-                };
-            },
-            cache: true
-        },
-        minimumInputLength: 0
-    });
-	// Initialize Select2 for "Passions" with dynamic data from the passions API
-    $('#passions').select2({
-        placeholder: 'Search and select up to 5 passions...',
-        maximumSelectionLength: 5, // Limit to 5 selections
-        width: '100%', // Asegurar que ocupe todo el ancho disponible
-    	dropdownAutoWidth: true, 
-        ajax: {
-            url: function(params) {
-                return `${apiConfig.apiBaseUrl}/api/typ/list-passions?search=${params.term || ''}`;
-            },
-            delay: 250,
-            processResults: function(data) {
-                return {
-                    results: data.data.map(function(passion) {
-                        return {
-                            id: passion.id,
-                            text: passion.name
-                        };
-                    })
-                };
-            },
-            cache: true
-        },
-        minimumInputLength: 0
-    });
-
-		// Initialize Select2 for Current Goals with multiple selections and dynamic dropdown
-	$('#current_goals').select2({
-		placeholder: 'Search and select one or more current goals...',
-		width: '100%', 
-		dropdownAutoWidth: true, 
-		ajax: {
-			url: function(params) {
-				return `${apiConfig.apiBaseUrl}/api/typ/list-current-goals?search=${params.term || ''}`;
-			},
-			delay: 250,
-			processResults: function(data) {
-				return {
-					results: data.data.map(function(goal) {
-						return {
-							id: goal.id,
-							text: goal.name
-						};
-					})
-				};
-			},
-			cache: true
-		},
-		minimumInputLength: 0
-	});
-
-	// Initialize Select2 for Education Levels with single selection and local search
-	$('#education_level').select2({
-		placeholder: 'Search and select your education level...',
-		width: '100%',
-		dropdownAutoWidth: true,
-		data: [], // Initially empty, will be populated from the API
-		ajax: {
-			url: `${apiConfig.apiBaseUrl}/api/typ/list-education-levels`,
-			processResults: function(data) {
-				return {
-					results: data.data.map(function(level) {
-						return {
-							id: level.id,
-							text: level.name
-						};
-					})
-				};
-			},
-			cache: true
-		},
-		minimumResultsForSearch: -1, // Always show the search box for local filtering
-		minimumInputLength: 0,
-		allowClear: true // Allow users to clear their selection
-	});
-
-	// Initialize Select2 for Industries with multiple selection
-	$('#industry').select2({
-		placeholder: 'Search and select industries...',
-		width: '100%',
-		dropdownAutoWidth: true,
-		multiple: true,  // Multiple selection enabled
-		ajax: {
-			url: `${apiConfig.apiBaseUrl}/api/typ/list-industry`,
-			processResults: function(data) {
-				return {
-					results: data.data.map(function(industry) {
-						return {
-							id: industry.id,
-							text: industry.name
-						};
-					})
-				};
-			},
-			cache: true
-		},
-		minimumInputLength: 0
-	});
-
-	// Initialize Select2 for Years of Experience with single selection
-	$('#years_of_experience').select2({
-		placeholder: 'Search and select your experience level...',
-		width: '100%',
-		dropdownAutoWidth: true,
-		data: [],  // Initially empty, will be populated from the API
-		ajax: {
-			url: `${apiConfig.apiBaseUrl}/api/typ/list-years-of-experience`,
-			processResults: function(data) {
-				return {
-					results: data.data.map(function(experience) {
-						return {
-							id: experience.id,
-							text: experience.name
-						};
-					})
-				};
-			},
-			cache: true
-		},
-		minimumResultsForSearch: -1,  // Always show the search box for local filtering
-		minimumInputLength: 0,
-		allowClear: true // Allow users to clear their selection
-	});
-
-
-
-
-    // Fetch default cities for both fields on load
-    fetch(`${apiConfig.apiBaseUrl}/api/typ/list-cities?search=`)
-        .then(response => response.json())
-        .then(data => {
-            const livesInSelect = $('#lives_in');
-            const fromSelect = $('#from');
-
-            data.data.forEach(function(city) {
-                const option = new Option(`${city.name}, ${city.state_iso_code}`, city.id, false, false);
-                livesInSelect.append(option).trigger('change');
-                fromSelect.append(option).trigger('change');
-            });
+    // Initialize Select2 with local search
+    function initSelect2WithLocalSearch(selector, data, placeholder) {
+        $(selector).select2({
+            placeholder: placeholder || 'Select an option...',
+            width: '100%',
+            data: data,
+            allowClear: true,
+            minimumInputLength: 0
         });
+    }
 
-    // Handle form submission
-    document.getElementById('myngly-form').addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Function to fetch education levels from API
+    function fetchEducationLevels() {
+        return fetch(`${apiConfig.apiBaseUrl}/api/typ/list-education-levels`)
+            .then(response => response.json())
+            .then(data => {
+                educationLevels = data.data.map(item => ({
+                    id: item.id,
+                    text: item.name || item.text
+                }));
+                return educationLevels;
+            })
+            .catch(error => console.error('Error fetching education levels:', error));
+    }
 
-        const phoneCode = document.getElementById('phone_code').value;
-        const phoneNumber = document.getElementById('phone_number').value;
-        const fullPhoneNumber = phoneCode + phoneNumber;
+    // Function to fetch phone codes from API
+    function fetchPhoneCodes() {
+        return fetch(`${apiConfig.apiBaseUrl}/api/typ/countries/phone-codes`)
+            .then(response => response.json())
+            .then(data => {
+                phoneCodes = Object.keys(data.data).map(code => ({
+                    id: code,
+                    text: data.data[code]
+                }));
+                return phoneCodes;
+            })
+            .catch(error => console.error('Error fetching phone codes:', error));
+    }
 
-        const passions = document.getElementById('passions');
-		const currentGoals = $('#current_goals').val();
-		const education = $('#education_level').val();
-		const industries = $('#industry').val();
-		const yearsOfExperience = $('#years_of_experience').val();
-		const combinedFilterIds = currentGoals.concat(education, industries, yearsOfExperience);
-		// combinedFilterIds.concat(educations);
-
-        if (passions.selectedOptions.length !== 5) {
-            alert("Please select exactly 5 passions.");
-            return;
-        }
-
-        Swal.fire({
-            title: 'Sending code...',
-            text: 'Please wait while we send the code to your phone.',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
+    // Initialize all Select2 fields
+    function initializeSelect2Fields() {
+        // Fields with local search
+        $('[data-endpoint2]').each(function() {
+            const endpoint = $(this).data('endpoint2');
+            if (endpoint === '/api/typ/list-education-levels') {
+                fetchEducationLevels().then(data => initSelect2WithLocalSearch(this, data));
+            } else if (endpoint === '/api/typ/countries/phone-codes') {
+                fetchPhoneCodes().then(data => initSelect2WithLocalSearch(this, data));
             }
         });
 
-        // Send verification code to the phone number
-        fetch(`${apiConfig.apiBaseUrl}/api/typ/sendcode`, {
+        // Initialize Select2 fields with backend search
+        initSelect2WithBackendSearch('#passions', '/api/typ/list-passions', 'search', 'id', 'name', 'Search and select up to 5 passions...', true, 5);
+        initSelect2WithBackendSearch('#current_goals', '/api/typ/list-current-goals', 'search', 'id', 'name', 'Search and select one or more current goals...', true);
+        initSelect2WithBackendSearch('#education_level', '/api/typ/list-education-levels', 'search', 'name', 'name', 'Search and select your education level...', false);
+        initSelect2WithBackendSearch('#industry', '/api/typ/list-industry', 'search', 'id', 'name', 'Search and select industries...', true);
+        initSelect2WithBackendSearch('#years_of_experience', '/api/typ/list-years-of-experience', 'search', 'id', 'name', 'Search and select your experience level...', false);
+        initSelect2WithBackendSearch('#job_title', '/api/typ/list-jobs', 'search', 'name', 'name', 'Search and select your job title...', false);
+        initSelect2WithBackendSearch('#company', '/api/companies/search', 'query', 'id', 'name', 'Search and select your company...', false);
+        initSelect2WithBackendSearch('#lives_in', '/api/typ/list-cities', 'search', 'name', 'name', 'Select your city...', false);
+        initSelect2WithBackendSearch('#from', '/api/typ/list-cities', 'search', 'name', 'name', 'Select your city of origin...', false);
+        initSelect2WithBackendSearch('#education', '/api/typ/list-universities', 'search', 'name', 'name', 'Select your university...', false);
+
+    }
+
+    // Initialize LinkedIn Connect button functionality
+    function initLinkedInConnect() {
+        $('#linkedin-connect').on('click', function(e) {
+            e.preventDefault();
+            const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${apiConfig.linkedinClientId}&redirect_uri=${encodeURIComponent(apiConfig.linkedinRedirectUri)}&state=${apiConfig.linkedinState}&scope=openid%20profile%20email`;
+
+            const loginWindow = window.open(linkedInAuthUrl, 'LinkedIn Login', 'width=600,height=600');
+            const pollTimer = setInterval(() => {
+                if (loginWindow.closed) {
+                    clearInterval(pollTimer);
+                }
+            }, 500);
+        });
+    }
+
+
+    // Handle form submission
+    function handleFormSubmission() {
+        $('#myngly-form').on('submit', function(e) {
+            e.preventDefault();
+            const phoneCode = $('#phone_code').val();
+            const phoneNumber = $('#phone_number').val();
+            const fullPhoneNumber = phoneCode + phoneNumber;
+            const passions = $('#passions').val();
+			const currentGoals = $('#current_goals').val();
+			const educationLevel = $('#education_level').val();
+			const industries = $('#industry').val();
+			const yearsOfExperience = $('#years_of_experience').val();
+			const combinedFilterIds = currentGoals.concat(educationLevel, industries, yearsOfExperience);
+            
+            if (passions.length !== 5) {
+                alert("Please select exactly 5 passions.");
+                return;
+            }
+
+            Swal.fire({ title: 'Sending code...', text: 'Please wait while we send the code to your phone.', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            fetch(`${apiConfig.apiBaseUrl}/api/typ/sendcode`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone_number: fullPhoneNumber })
+            })
+            .then(response => response.json())
+            .then(() => {
+                Swal.close();
+                Swal.fire({
+                    title: 'Enter the verification code',
+                    input: 'tel',
+                    inputAttributes: { maxlength: 6, inputmode: 'numeric' },
+                    showCancelButton: true,
+					didOpen: () => {
+						const input = Swal.getInput();
+						input.addEventListener('input', () => {
+							if (input.value.length === 6) {
+								Swal.clickConfirm();
+							}
+						});
+					},
+                    preConfirm: (code) => submitFormData(code, fullPhoneNumber, combinedFilterIds)
+                });
+            })
+            .catch(error => Swal.fire({ title: 'Error!', text: 'Failed to send verification code!', icon: 'error' }));
+        });
+    }
+    // Function to submit form data
+    function submitFormData(code, phoneNumber, combinedFilterIds) {
+		linkedinProfile = JSON.parse(localStorage.getItem('linkedin-profile'));
+        const formData = {
+			code: code,
+			name: $('#name').val(),
+			email: $('#email').val(),
+			phone_number: phoneNumber,
+			birthday_at: $('#birthday_at').val(),
+			gender: $('#gender').val(),
+			passions: Array.from(passions.selectedOptions).map(option => option.value),
+			linkedin_url: $('#linkedin_url').val(),
+			image_url: $('#image_url').val(),
+			filter_id: combinedFilterIds,
+			about_me: $('#about_me').val(),
+			lives_in: $('#lives_in').val(),
+			from: $('#from').val(),
+			job_titles: $('#job_title').val(),
+			company: $('#company').val(),
+			education: $('#education').val(),
+			military_veteran: $('#military_veteran').val(),
+			receive_news: $('#receive_news').val(),
+			linkedin: linkedinProfile,
+        };
+		console.log(formData);
+		console.log(apiConfig.apiBaseUrl);
+        return fetch(`${apiConfig.apiBaseUrl}/api/typ/register`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ phone_number: fullPhoneNumber })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
         })
         .then(response => response.json())
         .then(() => {
-            Swal.close();
-
             Swal.fire({
-                title: 'Enter the verification code',
-                text: `A 6-digit code has been sent to your phone: ${fullPhoneNumber}`,
-                input: 'tel',
-                inputAttributes: {
-                    autocapitalize: 'off',
-                    maxlength: 6,
-                    inputmode: 'numeric'
-                },
-                showCancelButton: true,
-                confirmButtonText: 'Submit',
-                didOpen: () => {
-                    const input = Swal.getInput();
-                    input.addEventListener('input', () => {
-                        if (input.value.length === 6) {
-                            Swal.clickConfirm();
-                        }
-                    });
-                },
-                preConfirm: (code) => {
-					
-                    const formData = {
-                        code: code,
-                        name: $('#name').val(),
-                        email: $('#email').val(),
-                        phone_number: fullPhoneNumber,
-                        birthday_at: $('#birthday_at').val(),
-                        gender: $('#gender').val(),
-                        passions: Array.from(passions.selectedOptions).map(option => option.value),
-                        linkedin_url: $('#linkedin_url').val(),
-                        image_url: $('#image_url').val(),
-                        filter_id: combinedFilterIds,
-                        about_me: $('#about_me').val(),
-                        lives_in: $('#lives_in').val(),
-                        from: $('#from').val(),
-                        job_titles: $('#job_title').val(),
-                        company: $('#company').val(),
-                        education: $('#education').val(),
-                        military_veteran: $('#military_veteran').val(),
-                        receive_news: $('#receive_news').val()
-                    };
-
-                    return fetch(`${apiConfig.apiBaseUrl}/api/typ/register`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(response.statusText);
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    });
-                }
-            }).then(result => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Registered successfully!',
-                        icon: 'success'
-                    });
-                }
+                title: 'Success!',
+                text: 'Registered successfully!',
+                icon: 'success'
             });
         })
         .catch(error => {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Failed to send verification code!',
-                icon: 'error'
-            });
+            Swal.showValidationMessage(`Request failed: ${error}`);
         });
-    });
+    }
 
+    // Initialization
+    $(document).ready(function() {
+        initializeSelect2Fields();
+        initLinkedInConnect();
+        handleFormSubmission();
+    });
 
 })(jQuery);
