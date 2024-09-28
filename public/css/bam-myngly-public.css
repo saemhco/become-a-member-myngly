@@ -32,9 +32,6 @@ textarea#about_me {
     resize: none;  /* Elimina la opción de redimensionar */
 }
 
-.select2-container {
-    width: 100% !important;
-}
 
 button.btn {
     padding: 10px 20px;
@@ -45,4 +42,11 @@ button.btn {
     font-size: 18px;
     text-align: center;
 }
+
+
+.select2-selection {
+    min-height: 37px;
+    height: auto;  
+}
+
 

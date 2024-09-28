@@ -138,7 +138,9 @@ class Bam_Myngly_Admin
 	{
 		register_setting('bam-myngly-settings-group', 'bam_myngly_api_url');
 		register_setting('bam-myngly-settings-group', 'bam_myngly_api_token');
-		register_setting('bam-myngly-settings-group', 'bam_myngly_linkedin_token');
+		register_setting('bam-myngly-settings-group', 'bam_myngly_linkedin_client_id');
+		register_setting('bam-myngly-settings-group', 'bam_myngly_linkedin_client_secret');
+
 
 		add_settings_section(
 			'bam_myngly_section',
@@ -164,9 +166,17 @@ class Bam_Myngly_Admin
 		);
 
 		add_settings_field(
-			'bam_myngly_linkedin_token',
-			'LinkedIn Token',
-			[$this, 'bam_myngly_linkedin_token_field'],
+			'bam_myngly_linkedin_client_id',
+			'LinkedIn Client ID',
+			[$this, 'bam_myngly_linkedin_client_id_field'],
+			'bam-myngly-settings',
+			'bam_myngly_section'
+		);
+
+		add_settings_field(
+			'bam_myngly_linkedin_client_secret',
+			'LinkedIn Client Secret',
+			[$this, 'bam_myngly_linkedin_client_secret_field'],
 			'bam-myngly-settings',
 			'bam_myngly_section'
 		);
@@ -184,9 +194,15 @@ class Bam_Myngly_Admin
 		echo '<input type="text" name="bam_myngly_api_token" value="' . $value . '" class="regular-text">';
 	}
 
-	public function bam_myngly_linkedin_token_field()
+	public function bam_myngly_linkedin_client_id_field()
 	{
-		$value = esc_attr(get_option('bam_myngly_linkedin_token', ''));
-		echo '<input type="text" name="bam_myngly_linkedin_token" value="' . $value . '" class="regular-text">';
+		$value = esc_attr(get_option('bam_myngly_linkedin_client_id', ''));
+		echo '<input type="text" name="bam_myngly_linkedin_client_id" value="' . $value . '" class="regular-text">';
+	}
+
+	public function bam_myngly_linkedin_client_secret_field()
+	{
+		$value = esc_attr(get_option('bam_myngly_linkedin_client_secret', ''));
+		echo '<input type="text" name="bam_myngly_linkedin_client_secret" value="' . $value . '" class="regular-text">';
 	}
 }

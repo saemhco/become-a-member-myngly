@@ -27,7 +27,7 @@
                 return {
                     results: data.data.map(function(city) {
                         return {
-                            id: city.id,
+                            id: `${city.name}, ${city.state_iso_code}`,
                             text: `${city.name}, ${city.state_iso_code}`
                         };
                     })
@@ -51,7 +51,7 @@
                 return {
                     results: data.data.map(function(job) {
                         return {
-                            id: job.id,
+                            id: job.name,
                             text: job.name
                         };
                     })
@@ -74,7 +74,7 @@
                 return {
                     results: data.data.map(function(company) {
                         return {
-                            id: company.id,
+                            id: company.name,
                             text: company.name
                         };
                     })
@@ -84,6 +84,157 @@
         },
         minimumInputLength: 0
     });
+
+	// Initialize Select2 for "Education" with dynamic university data
+    $('#education').select2({
+        placeholder: 'Search for a university...',
+        width: 'resolve',
+        ajax: {
+            url: function(params) {
+                return `${apiConfig.apiBaseUrl}/api/typ/list-universities?search=${params.term || ''}`;
+            },
+            delay: 250,
+            processResults: function(data) {
+                return {
+                    results: data.data.map(function(university) {
+                        return {
+                            id: university.name,
+                            text: university.name
+                        };
+                    })
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0
+    });
+	// Initialize Select2 for "Passions" with dynamic data from the passions API
+    $('#passions').select2({
+        placeholder: 'Search and select up to 5 passions...',
+        maximumSelectionLength: 5, // Limit to 5 selections
+        width: '100%', // Asegurar que ocupe todo el ancho disponible
+    	dropdownAutoWidth: true, 
+        ajax: {
+            url: function(params) {
+                return `${apiConfig.apiBaseUrl}/api/typ/list-passions?search=${params.term || ''}`;
+            },
+            delay: 250,
+            processResults: function(data) {
+                return {
+                    results: data.data.map(function(passion) {
+                        return {
+                            id: passion.id,
+                            text: passion.name
+                        };
+                    })
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0
+    });
+
+		// Initialize Select2 for Current Goals with multiple selections and dynamic dropdown
+	$('#current_goals').select2({
+		placeholder: 'Search and select one or more current goals...',
+		width: '100%', 
+		dropdownAutoWidth: true, 
+		ajax: {
+			url: function(params) {
+				return `${apiConfig.apiBaseUrl}/api/typ/list-current-goals?search=${params.term || ''}`;
+			},
+			delay: 250,
+			processResults: function(data) {
+				return {
+					results: data.data.map(function(goal) {
+						return {
+							id: goal.id,
+							text: goal.name
+						};
+					})
+				};
+			},
+			cache: true
+		},
+		minimumInputLength: 0
+	});
+
+	// Initialize Select2 for Education Levels with single selection and local search
+	$('#education_level').select2({
+		placeholder: 'Search and select your education level...',
+		width: '100%',
+		dropdownAutoWidth: true,
+		data: [], // Initially empty, will be populated from the API
+		ajax: {
+			url: `${apiConfig.apiBaseUrl}/api/typ/list-education-levels`,
+			processResults: function(data) {
+				return {
+					results: data.data.map(function(level) {
+						return {
+							id: level.id,
+							text: level.name
+						};
+					})
+				};
+			},
+			cache: true
+		},
+		minimumResultsForSearch: -1, // Always show the search box for local filtering
+		minimumInputLength: 0,
+		allowClear: true // Allow users to clear their selection
+	});
+
+	// Initialize Select2 for Industries with multiple selection
+	$('#industry').select2({
+		placeholder: 'Search and select industries...',
+		width: '100%',
+		dropdownAutoWidth: true,
+		multiple: true,  // Multiple selection enabled
+		ajax: {
+			url: `${apiConfig.apiBaseUrl}/api/typ/list-industry`,
+			processResults: function(data) {
+				return {
+					results: data.data.map(function(industry) {
+						return {
+							id: industry.id,
+							text: industry.name
+						};
+					})
+				};
+			},
+			cache: true
+		},
+		minimumInputLength: 0
+	});
+
+	// Initialize Select2 for Years of Experience with single selection
+	$('#years_of_experience').select2({
+		placeholder: 'Search and select your experience level...',
+		width: '100%',
+		dropdownAutoWidth: true,
+		data: [],  // Initially empty, will be populated from the API
+		ajax: {
+			url: `${apiConfig.apiBaseUrl}/api/typ/list-years-of-experience`,
+			processResults: function(data) {
+				return {
+					results: data.data.map(function(experience) {
+						return {
+							id: experience.id,
+							text: experience.name
+						};
+					})
+				};
+			},
+			cache: true
+		},
+		minimumResultsForSearch: -1,  // Always show the search box for local filtering
+		minimumInputLength: 0,
+		allowClear: true // Allow users to clear their selection
+	});
+
+
+
+
     // Fetch default cities for both fields on load
     fetch(`${apiConfig.apiBaseUrl}/api/typ/list-cities?search=`)
         .then(response => response.json())
@@ -107,6 +258,13 @@
         const fullPhoneNumber = phoneCode + phoneNumber;
 
         const passions = document.getElementById('passions');
+		const currentGoals = $('#current_goals').val();
+		const education = $('#education_level').val();
+		const industries = $('#industry').val();
+		const yearsOfExperience = $('#years_of_experience').val();
+		const combinedFilterIds = currentGoals.concat(education, industries, yearsOfExperience);
+		// combinedFilterIds.concat(educations);
+
         if (passions.selectedOptions.length !== 5) {
             alert("Please select exactly 5 passions.");
             return;
@@ -153,6 +311,7 @@
                     });
                 },
                 preConfirm: (code) => {
+					
                     const formData = {
                         code: code,
                         name: $('#name').val(),
@@ -163,11 +322,11 @@
                         passions: Array.from(passions.selectedOptions).map(option => option.value),
                         linkedin_url: $('#linkedin_url').val(),
                         image_url: $('#image_url').val(),
-                        filter_id: $('#filter_id').val(),
+                        filter_id: combinedFilterIds,
                         about_me: $('#about_me').val(),
                         lives_in: $('#lives_in').val(),
                         from: $('#from').val(),
-                        job_title: $('#job_title').val(),
+                        job_titles: $('#job_title').val(),
                         company: $('#company').val(),
                         education: $('#education').val(),
                         military_veteran: $('#military_veteran').val(),
@@ -209,5 +368,6 @@
             });
         });
     });
+
 
 })(jQuery);
