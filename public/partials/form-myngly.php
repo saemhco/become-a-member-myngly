@@ -72,7 +72,8 @@
     <!-- Company -->
     <div class="form-group">
         <label for="company">Company *</label>
-        <select name="company" id="company" class="form-control" data-endpoint="/api/companies/search" data-search-key="query" required></select>
+        <input type="text" name="company" id="company" placeholder="Enter your company name" class="form-control" required>
+        <!-- <select name="company" id="company" class="form-control" data-endpoint="/api/companies/search" data-search-key="query" required></select> -->
     </div>
 
     <!-- Education Level -->
@@ -140,8 +141,15 @@
         </select>
     </div>
 
+    <!-- Current Goals (Multiple Select) -->
+    <div class="form-group" style="grid-column: span 2;">
+        <label for="list_ids">Select list(s) to subscribe to</label>
+        <select name="list_ids[]" id="list_ids" class="form-control" multiple></select>
+        <small class="form-text text-muted">Select one or more lists</small>
+    </div>
+
     <!-- Submit Button (Full width) -->
     <div class="text-center" style="grid-column: span 2;">
         <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-    </div>
+    </div><br>
 </form>
