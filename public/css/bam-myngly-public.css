@@ -17,18 +17,27 @@
 /* Responsive - One column layout on small screens */
 @media (max-width: 768px) {
     .form-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important; /* Forzar una sola columna */
+        gap: 15px;
+    }
+
+    .form-grid .form-group {
+        grid-column: 1 / -1 !important; /* Extiende cada grupo de formulario a toda la fila */
     }
 
     .form-grid button {
-        grid-column: span 1;
+        grid-column: 1 / -1 !important;
+    }
+
+    .form-grid input, .form-grid select, .form-grid textarea {
+        width: 100% !important;
     }
 }
 
 textarea#about_me {
     width: 100%;
     height: 100px;
-    resize: none;  /* Elimina la opción de redimensionar */
+    resize: none;  
 }
 
 button.btn {
@@ -39,9 +48,24 @@ button.btn {
 .swal2-input {
     font-size: 18px;
     text-align: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .select2-selection {
     min-height: 37px;
     height: auto;  
+}
+
+.swal2-popup {
+    display: grid !important;
+    grid-template-columns: 1fr; 
+    justify-items: center; 
+}
+
+.swal2-input {
+    width: 100% !important; 
+    box-sizing: border-box; 
+    max-width: 400px;
+    text-align: center;
 }
