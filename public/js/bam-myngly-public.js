@@ -156,7 +156,17 @@
                 body: JSON.stringify({ phone_number: fullPhoneNumber })
             })
                 .then(response => response.json())
-                .then(() => {
+                .then(data => {
+                    if (data.code === 100) {
+                        Swal.fire({
+                            icon: 'warning', 
+                            title: 'Process Cancelled',
+                            text: data.message, 
+                            confirmButtonText: 'Ok'
+                        });
+                        return;
+                    }
+                
                     Swal.close();
                     Swal.fire({
                         title: 'Enter the verification code sent to ' + fullPhoneNumber,
