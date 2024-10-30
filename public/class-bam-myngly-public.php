@@ -120,16 +120,22 @@ class Bam_Myngly_Public
 					if (!is_wp_error($profile_response)) {
 						$profile = json_decode(wp_remote_retrieve_body($profile_response), true);
 						$linkedin_profile_json = json_encode($profile, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+
+						// Separar nombre y apellidos
+						$name_parts = explode(' ', $profile['name'], 2);
+						$name = $name_parts[0];
+						$last_name = isset($name_parts[1]) ? $name_parts[1] : '';
+
 						echo "<script>
-                            window.opener.document.getElementById('name').value = '{$profile['given_name']}';
-                            window.opener.document.getElementById('email').value = '{$profile['email']}';
-                            window.opener.document.getElementById('profile-photo').src = '{$profile['picture']}';
-                            window.opener.document.getElementById('image_url').value = '{$profile['picture']}';
-                            window.opener.document.getElementById('linkedin-user-id').value = '{$profile['sub']}'; // ID de LinkedIn
+							window.opener.document.getElementById('name').value = '" . addslashes($name) . "';
+							window.opener.document.getElementById('last_name').value = '" . addslashes($last_name) . "';
+							window.opener.document.getElementById('email').value = '{$profile['email']}';
+							window.opener.document.getElementById('profile-photo').src = '{$profile['picture']}';
+							window.opener.document.getElementById('image_url').value = '{$profile['picture']}';
+							window.opener.document.getElementById('linkedin-user-id').value = '{$profile['sub']}';
 							window.opener.document.getElementById('linkedin-profile').value = '{$linkedin_profile_json}';
-                        
-                            window.close();
-                        </script>";
+							window.close();
+						</script>";
 					} else {
 						echo 'Error fetching LinkedIn profile data';
 					}

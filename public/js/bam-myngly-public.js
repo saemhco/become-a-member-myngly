@@ -160,13 +160,12 @@
                     if (data.code === 100) {
                         Swal.fire({
                             icon: 'warning', 
-                            title: 'Process Cancelled',
+                            title: 'Action Required',
                             text: data.message, 
                             confirmButtonText: 'Ok'
                         });
                         return;
                     }
-                
                     Swal.close();
                     Swal.fire({
                         title: 'Enter the verification code sent to ' + fullPhoneNumber,
@@ -190,9 +189,7 @@
     // Function to submit form data
     function submitFormData(code, phoneNumber, combinedFilterIds) {
         const linkedinProfileValue = $('#linkedin-profile').val();
-
         let linkedinProfile = {};
-
         // Attempt to parse LinkedIn profile if it's a string
         if (typeof linkedinProfileValue === 'string') {
             try {
@@ -207,6 +204,7 @@
         const formData = {
             code: code,
             name: $('#name').val(),
+            name: $('#last_name').val(),
             email: $('#email').val(),
             phone_number: phoneNumber,
             birthday_at: $('#birthday_at').val(),
@@ -242,24 +240,45 @@
             body: JSON.stringify(formData)
         })
             .then(response => response.json())
-            .then(() => {
+            .then((data) => {
                 // Close loading message
                 Swal.close();
 
-                // Show success message
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Registered successfully!',
-                    icon: 'success',willClose: () => {
-                        //reload the page
-                        location.reload();
-                    }
-                });
+                if (data.code === 100) {
+                    Swal.fire({
+                        icon: 'warning', 
+                        title: 'Processing Error',
+                        text: data.message, 
+                        confirmButtonText: 'Ok'
+                    });
+                    return;
+                } 
+                else {
+                    // Show success message
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Registered successfully!',
+                        icon: 'success',willClose: () => {
+                            //reload the page
+                            location.reload();
+                        }
+                    });
+                }               
             })
             .catch(error => {
-                // Show validation error message if the request fails
-                Swal.showValidationMessage(`Request failed: ${error}`);
+                console.error('Request failed:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Technical Issues',
+                    text: 'We are experiencing technical difficulties. Please try again later.',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
+                });
             });
+            
     }
 
 
