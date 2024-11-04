@@ -274,7 +274,8 @@
                     confirmButtonText: 'Ok'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.reload();
+                        // hide the loading message
+                        Swal.close();
                     }
                 });
             });
