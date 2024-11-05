@@ -243,16 +243,26 @@
             .then((data) => {
                 // Close loading message
                 Swal.close();
-
                 if (data.code === 100) {
+                    let errorMessages = '';                
+                    if (data.errors) {
+                        for (const field in data.errors) {
+                            if (data.errors.hasOwnProperty(field)) {
+                                data.errors[field].forEach(message => {
+                                    errorMessages += `${message}\n`;
+                                });
+                            }
+                        }
+                    }
+                
                     Swal.fire({
-                        icon: 'warning', 
+                        icon: 'warning',
                         title: 'Processing Error',
-                        text: data.message, 
+                        text: `${data.message}\n${errorMessages}`,
                         confirmButtonText: 'Ok'
                     });
                     return;
-                } 
+                }                
                 else {
                     // Show success message
                     Swal.fire({
