@@ -100,21 +100,21 @@
     <!-- Current Goals (Multiple Select) -->
     <div class="form-group">
         <label for="current_goals">Current Goals *</label>
-        <select name="current_goals[]" id="current_goals" class="form-control" multiple></select>
+        <select name="current_goals[]" id="current_goals" class="form-control" data-endpoint2="/api/typ/list-current-goals" data-id-key="id" multiple></select>
         <small class="form-text text-muted">Select one or more current goals</small>
     </div>
 
     <!-- Industries (Multiple Select) -->
     <div class="form-group">
         <label for="industry">Industries *</label>
-        <select name="industry[]" id="industry" class="form-control" multiple></select>
+        <select name="industry[]" id="industry" class="form-control" data-endpoint2="/api/typ/list-industry" data-id-key="id" multiple></select>
         <small class="form-text text-muted">Select multiple industries</small>
     </div>
 
     <!-- Years of Experience -->
     <div class="form-group">
         <label for="years_of_experience">Years of Experience *</label>
-        <select name="years_of_experience" id="years_of_experience" class="form-control" required></select>
+        <select name="years_of_experience" id="years_of_experience" class="form-control" data-endpoint2="/api/typ/list-years-of-experience" data-id-key="id" required></select>
         <small class="form-text text-muted">Select your experience level</small>
     </div>
 
@@ -145,7 +145,7 @@
     <!-- Current Goals (Multiple Select) -->
     <div class="form-group" style="grid-column: span 2;">
         <label for="list_ids">Select list(s) to subscribe to</label>
-        <select name="list_ids[]" id="list_ids" class="form-control" multiple></select>
+        <select name="list_ids[]" id="list_ids" class="form-control" data-endpoint2="/api/typ/constant-contact/list" data-id-key="id" multiple></select>
         <small class="form-text text-muted">Select one or more lists</small>
     </div>
 

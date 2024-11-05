@@ -21,9 +21,6 @@
                     return {
                         results: data.data.map(function(item) {
 							let itemKey = item[idKey];
-                            if (selector === '#from' || selector === '#lives_in') {
-								itemKey = item.name + ', ' + item.state_iso_code;
-							}
                             return {
                                 id: itemKey,
                                 text: item[textKey]
@@ -78,6 +75,20 @@
             .catch(error => console.error('Error fetching phone codes:', error));
     }
 
+    // Function to others local search
+    function fetchLocalSearch(url) {
+        return fetch(`${apiConfig.apiBaseUrl+url}`)
+            .then(response => response.json())
+            .then(data => {
+                const result = data.data.map(item => ({
+                    id: item.id,
+                    text: item.name || item.text
+                }));
+                return result;
+            })
+            .catch(error => console.log('Error fetching data:', error));
+    }
+
     // Initialize all Select2 fields
     function initializeSelect2Fields() {
         // Fields with local search
@@ -87,6 +98,14 @@
                 fetchEducationLevels().then(data => initSelect2WithLocalSearch(this, data));
             } else if (endpoint === '/api/typ/countries/phone-codes') {
                 fetchPhoneCodes().then(data => initSelect2WithLocalSearch(this, data));
+            } else if (endpoint === '/api/typ/list-years-of-experience') {
+                fetchLocalSearch(endpoint).then(data => initSelect2WithLocalSearch(this, data));
+            } else if (endpoint === '/api/typ/list-industry') {
+                fetchLocalSearch(endpoint).then(data => initSelect2WithLocalSearch(this, data, "Search and select industries..."));
+            } else if (endpoint === '/api/typ/list-current-goals') {
+                fetchLocalSearch(endpoint).then(data => initSelect2WithLocalSearch(this, data, "Search and select one or more current goals..."));
+            } else if (endpoint === '/api/typ/constant-contact/list') {
+                fetchLocalSearch(endpoint).then(data => initSelect2WithLocalSearch(this, data, "Search and select one or more..."));
             }
         });
 
