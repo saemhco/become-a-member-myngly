@@ -223,7 +223,7 @@
         const formData = {
             code: code,
             name: $('#name').val(),
-            name: $('#last_name').val(),
+            last_name: $('#last_name').val(),
             email: $('#email').val(),
             phone_number: phoneNumber,
             birthday_at: $('#birthday_at').val(),
@@ -266,6 +266,15 @@
                     let errorMessages = '';                
                     if (data.errors) {
                         for (const field in data.errors) {
+                            if(field === 'email'){
+                                Swal.fire({
+                                    icon: 'warning', 
+                                    title: 'Action Required',
+                                    text: "This email is already linked to an existing account. Please double check your inputs or go to Myngly app login screen and select ‘I HAVE AN ACCOUNT’ to sign in.", 
+                                    confirmButtonText: 'Ok'
+                                });
+                                return;
+                            }
                             if (data.errors.hasOwnProperty(field)) {
                                 data.errors[field].forEach(message => {
                                     errorMessages += `${message}\n`;

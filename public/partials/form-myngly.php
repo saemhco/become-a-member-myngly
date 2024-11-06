@@ -129,7 +129,7 @@
         <label for="military_veteran">Military Veteran *</label>
         <select name="military_veteran" id="military_veteran" class="form-control" required>
             <option value="1">Yes</option>
-            <option value="0">No</option>
+            <option value="0" selected>No</option>
         </select>
     </div>
 
