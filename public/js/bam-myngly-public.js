@@ -167,12 +167,22 @@
                             $('#image_url').val(imageUrl); 
                         } else {
                             console.error('Upload failed:', response);
-                            alert('There was an error uploading the file. Please try again.');
+                            Swal.fire({
+                            icon: 'warning',
+                            title: 'Upload Error',
+                            text: 'There was an error uploading the file. Please try again.',
+                            confirmButtonText: 'Ok'
+                        });
                         }
                     },
                     error: function(error) {
                         console.error('Request failed:', error);
-                        alert('There was an error uploading the file. Please try again.');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Upload Error',
+                            text: 'There was an error uploading the file. Please try again.',
+                            confirmButtonText: 'Ok'
+                        });
                     }
                 });
             }
@@ -188,18 +198,18 @@
 
             const currentImageUrl = $('#profile-photo').attr('src');
             if (currentImageUrl === defaultImageUrl) {
-                alert("Please upload a profile photo before submitting the form.");
-                $('#uploadPhotoButton').addClass('highlight');
-            
-            $('#uploadPhotoButton').dropdown('toggle');
+                console.log('Please upload a profile photo before submitting the form.');
+                alert('Please upload a profile photo before submitting the form.');
 
-            setTimeout(function() {
-                $('#uploadPhotoButton').removeClass('highlight');
-            }, 2000);
-
-            return;
+                    $('#uploadPhotoButton').addClass('highlight');
+                    $('#uploadPhotoButton').dropdown('toggle'); 
+                    
+                    setTimeout(function() {
+                        $('#uploadPhotoButton').removeClass('highlight');
+                    }, 2000);
                 return;
             }
+            
 
             const phoneCode = $('#phone_code').val();
             const phoneNumber = $('#phone_number').val();
@@ -211,10 +221,24 @@
             const yearsOfExperience = $('#years_of_experience').val();
             const combinedFilterIds = currentGoals.concat(educationLevel, industries, yearsOfExperience);
     
+            
             if (passions.length !== 5) {
-                alert("Please select exactly 5 passions.");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Action Required',
+                    text: 'Please select exactly 5 passions.',
+                    confirmButtonText: 'Ok'
+                }).then(() => {
+                    $('#passions').addClass('highlight');
+
+                    setTimeout(() => {
+                        $('#passions').removeClass('highlight');
+                    }, 2000);
+                });
+
                 return;
             }
+                    
     
             // Show loading message while verifying the data
             Swal.fire(
