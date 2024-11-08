@@ -1,10 +1,22 @@
 <form id="myngly-form" method="POST" class="form-grid">
 
-    <!-- Profile Picture and LinkedIn Connect Button (Centered at the top) -->
+    <!-- Profile Picture and Image Upload Button (Centered at the top) -->
     <div class="form-group text-center" style="grid-column: span 2;">
-        <img id="profile-photo" src="https://via.placeholder.com/100" alt="Anonymous Profile Photo" class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px;">
+
+        <img id="profile-photo" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/user_placeholder.png'; ?>" alt="Anonymous Profile Photo" class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px;">
+        <!-- <img id="profile-photo" src="https://via.placeholder.com/100" alt="Anonymous Profile Photo" class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px;"> -->
         <br>
-        <label id="linkedin-connect" class="btn btn-primary btn-sm">Connect with LinkedIn</label>
+        <!-- Button dropdown for LinkedIn and local upload -->
+        <div class="dropdown">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="uploadPhotoButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Upload Photo
+            </button>
+            <div class="dropdown-menu" aria-labelledby="uploadPhotoButton">
+                <a class="dropdown-item" href="#" id="connect-linkedin">Connect with LinkedIn</a>
+                <a class="dropdown-item" href="#" id="upload-from-device">Upload from device</a>
+                <input type="file" id="file-upload" accept="image/*" style="display: none;">
+            </div>
+        </div>
     </div>
 
     <!-- Hidden fields for LinkedIn data -->
@@ -100,14 +112,14 @@
     <!-- Current Goals (Multiple Select) -->
     <div class="form-group">
         <label for="current_goals">Current Goals *</label>
-        <select name="current_goals[]" id="current_goals" class="form-control" data-endpoint2="/api/typ/list-current-goals" data-id-key="id" multiple></select>
+        <select name="current_goals[]" id="current_goals" class="form-control" data-endpoint2="/api/typ/list-current-goals" data-id-key="id" multiple required></select>
         <small class="form-text text-muted">Select one or more current goals</small>
     </div>
 
     <!-- Industries (Multiple Select) -->
     <div class="form-group">
         <label for="industry">Industries *</label>
-        <select name="industry[]" id="industry" class="form-control" data-endpoint2="/api/typ/list-industry" data-id-key="id" multiple></select>
+        <select name="industry[]" id="industry" class="form-control" data-endpoint2="/api/typ/list-industry" data-id-key="id" multiple required></select>
         <small class="form-text text-muted">Select multiple industries</small>
     </div>
 

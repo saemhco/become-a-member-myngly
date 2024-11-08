@@ -2,6 +2,7 @@
     'use strict';
 
     // Local storage for data
+    const defaultImageUrl = $('#profile-photo').attr('src'); 
     let educationLevels = [];
     let phoneCodes = [];
 
@@ -127,11 +128,9 @@
 
     // Initialize LinkedIn Connect button functionality
     function initLinkedInConnect() {
-        $('#linkedin-connect').on('click', function(e) {
+        $('#connect-linkedin').on('click', function(e) {
             e.preventDefault();
-            // const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${apiConfig.linkedinClientId}&redirect_uri=${encodeURIComponent(apiConfig.linkedinRedirectUri)}&state=${apiConfig.linkedinState}&scope=openid%20profile%20email`;
             const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${encodeURIComponent(apiConfig.linkedinClientId)}&redirect_uri=${encodeURIComponent(apiConfig.linkedinRedirectUri)}&state=${encodeURIComponent(apiConfig.linkedinState)}&scope=${encodeURIComponent('openid profile email r_liteprofile')}`;
-
             const loginWindow = window.open(linkedInAuthUrl, 'LinkedIn Login', 'width=600,height=600');
             const pollTimer = setInterval(() => {
                 if (loginWindow.closed) {
@@ -141,11 +140,67 @@
         });
     }
 
+    function handleFileUpload() {
+        $('#upload-from-device').on('click', function(e) {
+            e.preventDefault();
+            $('#file-upload').trigger('click'); 
+        });
+    
+        $('#file-upload').on('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('action', 'upload_temp_file'); 
+                formData.append('security', apiConfig.authToken); 
+    
+                $.ajax({
+                    url: apiConfig.uploadUrl,
+                    method: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            const imageUrl = response.data.url;
+                            $('#profile-photo').attr('src', imageUrl); 
+                            $('#image_url').val(imageUrl); 
+                        } else {
+                            console.error('Upload failed:', response);
+                            alert('There was an error uploading the file. Please try again.');
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Request failed:', error);
+                        alert('There was an error uploading the file. Please try again.');
+                    }
+                });
+            }
+        });
+    }
+    
+
 
     // Handle form submission
     function handleFormSubmission() {
         $('#myngly-form').on('submit', function (e) {
             e.preventDefault();
+
+            const currentImageUrl = $('#profile-photo').attr('src');
+            if (currentImageUrl === defaultImageUrl) {
+                alert("Please upload a profile photo before submitting the form.");
+                $('#uploadPhotoButton').addClass('highlight');
+            
+            $('#uploadPhotoButton').dropdown('toggle');
+
+            setTimeout(function() {
+                $('#uploadPhotoButton').removeClass('highlight');
+            }, 2000);
+
+            return;
+                return;
+            }
+
             const phoneCode = $('#phone_code').val();
             const phoneNumber = $('#phone_number').val();
             const fullPhoneNumber = phoneCode + phoneNumber;
@@ -326,6 +381,7 @@
     $(document).ready(function() {
         initializeSelect2Fields();
         initLinkedInConnect();
+        handleFileUpload();
         handleFormSubmission();
     });
 

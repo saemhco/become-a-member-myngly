@@ -69,3 +69,12 @@ button.btn {
     max-width: 400px;
     text-align: center;
 }
+
+.highlight {
+    animation: blink 1s ease-in-out 0.5s infinite alternate;
+}
+
+@keyframes blink {
+    from { background-color: #ffdddd; }
+    to { background-color: #ff6666; }
+}

@@ -35,6 +35,8 @@ class Bam_Myngly_Public
 		add_action('init', [$this, 'linkedin_callback_route']);
 		add_filter('query_vars', [$this, 'add_query_vars']);
 		add_action('template_redirect', [$this, 'handle_linkedin_callback']);
+		add_action('wp_ajax_upload_temp_file', array($this, 'handle_temp_file_upload'));
+		add_action('wp_ajax_nopriv_upload_temp_file', array($this, 'handle_temp_file_upload'));
 	}
 
 	/**
@@ -54,6 +56,7 @@ class Bam_Myngly_Public
 	 */
 	public function enqueue_scripts()
 	{
+		wp_enqueue_script('popper-js', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js', array('jquery'), null, true);
 		wp_enqueue_script('bootstrap-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js', array('jquery'), null, true);
 		wp_enqueue_script('sweetalert-js', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', array('jquery'), null, true);
 		wp_enqueue_script('select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), null, true);
@@ -65,7 +68,9 @@ class Bam_Myngly_Public
 			'linkedinClientId' => esc_attr(get_option('bam_myngly_linkedin_client_id')),
 			'linkedinRedirectUri' => esc_url(home_url('/linkedin-callback')),
 			'linkedinState' => wp_create_nonce('linkedin_oauth_state'),
-			'linkedinAccessToken' => isset($_SESSION['linkedin_access_token']) ? $_SESSION['linkedin_access_token'] : '' // Pass the token to JavaScript
+			'linkedinAccessToken' => isset($_SESSION['linkedin_access_token']) ? $_SESSION['linkedin_access_token'] : '', // Pass the token to JavaScript
+			'uploadUrl' => admin_url('admin-ajax.php'),
+			'authToken' => wp_create_nonce('wp_rest')
 		));
 	}
 
@@ -152,6 +157,32 @@ class Bam_Myngly_Public
 					}
 				}
 			}
+		}
+	}
+
+	public function handle_temp_file_upload()
+	{
+		check_ajax_referer('wp_rest', 'security');
+
+		if (!function_exists('wp_handle_upload')) {
+			require_once(ABSPATH . 'wp-admin/includes/file.php');
+		}
+
+		$uploadedfile = $_FILES['file'];
+		$upload_overrides = array('test_form' => false);
+
+		$upload_dir = plugin_dir_path(__FILE__) . 'partials/assets/images/temp/';
+		if (!file_exists($upload_dir)) {
+			wp_mkdir_p($upload_dir);
+		}
+		$filename = wp_unique_filename($upload_dir, $uploadedfile['name']);
+		$uploadfile_path = $upload_dir . $filename;
+
+		if (move_uploaded_file($uploadedfile['tmp_name'], $uploadfile_path)) {
+			$image_url = plugin_dir_url(__FILE__) . 'partials/assets/images/temp/' . $filename;
+			wp_send_json_success(array('url' => $image_url));
+		} else {
+			wp_send_json_error(array('message' => 'Failed to upload file.'));
 		}
 	}
 
