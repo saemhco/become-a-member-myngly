@@ -129,7 +129,8 @@
     function initLinkedInConnect() {
         $('#linkedin-connect').on('click', function(e) {
             e.preventDefault();
-            const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${apiConfig.linkedinClientId}&redirect_uri=${encodeURIComponent(apiConfig.linkedinRedirectUri)}&state=${apiConfig.linkedinState}&scope=openid%20profile%20email`;
+            // const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${apiConfig.linkedinClientId}&redirect_uri=${encodeURIComponent(apiConfig.linkedinRedirectUri)}&state=${apiConfig.linkedinState}&scope=openid%20profile%20email`;
+            const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${encodeURIComponent(apiConfig.linkedinClientId)}&redirect_uri=${encodeURIComponent(apiConfig.linkedinRedirectUri)}&state=${encodeURIComponent(apiConfig.linkedinState)}&scope=${encodeURIComponent('openid profile email r_liteprofile')}`;
 
             const loginWindow = window.open(linkedInAuthUrl, 'LinkedIn Login', 'width=600,height=600');
             const pollTimer = setInterval(() => {
