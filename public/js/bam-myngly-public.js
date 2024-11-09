@@ -38,7 +38,7 @@
     }
 
     // Initialize Select2 with local search
-    function initSelect2WithLocalSearch(selector, data, placeholder) {
+    function initSelect2WithLocalSearch(selector, data, placeholder=null, keyId='id', keyText='name') {
         $(selector).select2({
             placeholder: placeholder || 'Select an option...',
             width: '100%',
@@ -76,19 +76,21 @@
             .catch(error => console.error('Error fetching phone codes:', error));
     }
 
-    // Function to others local search
     function fetchLocalSearch(url) {
-        return fetch(`${apiConfig.apiBaseUrl+url}`)
+        return fetch(`${apiConfig.apiBaseUrl + url}`)
             .then(response => response.json())
             .then(data => {
-                const result = data.data.map(item => ({
-                    id: item.id,
-                    text: item.name || item.text
-                }));
+                const result = data.data.map(item => {
+                    return {
+                        id: item.id,
+                        text: url.includes('/api/typ/list-current-goals') ? item.nameforme : (item.name || item.text)
+                    };
+                });
                 return result;
             })
             .catch(error => console.log('Error fetching data:', error));
     }
+    
 
     // Initialize all Select2 fields
     function initializeSelect2Fields() {
@@ -96,6 +98,7 @@
         $('[data-endpoint2]').each(function() {
             const endpoint = $(this).data('endpoint2');
             if (endpoint === '/api/typ/list-education-levels') {
+                // console.log('Fetching education levels...', data);
                 fetchEducationLevels().then(data => initSelect2WithLocalSearch(this, data));
             } else if (endpoint === '/api/typ/countries/phone-codes') {
                 fetchPhoneCodes().then(data => initSelect2WithLocalSearch(this, data));
@@ -112,7 +115,7 @@
 
         // Initialize Select2 fields with backend search
         initSelect2WithBackendSearch('#passions', '/api/typ/list-passions', 'search', 'id', 'name', 'Search and select up to 5 passions...', true, 5);
-        initSelect2WithBackendSearch('#current_goals', '/api/typ/list-current-goals', 'search', 'id', 'name', 'Search and select one or more current goals...', true);
+        initSelect2WithBackendSearch('#current_goals', '/api/typ/list-current-goals', 'search', 'id', 'nameforme', 'Search and select one or more current goals...', true);
         initSelect2WithBackendSearch('#education_level', '/api/typ/list-education-levels', 'search', 'name', 'name', 'Search and select your education level...', false);
         initSelect2WithBackendSearch('#industry', '/api/typ/list-industry', 'search', 'id', 'name', 'Search and select industries...', true);
         initSelect2WithBackendSearch('#years_of_experience', '/api/typ/list-years-of-experience', 'search', 'id', 'name', 'Search and select your experience level...', false);
