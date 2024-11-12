@@ -377,8 +377,8 @@
                 else {
                     // Show success message
                     Swal.fire({
-                        title: 'Success!',
-                        text: 'Registered successfully!',
+                        title: 'We’ve received your application and will get back to you as soon as we can.',
+                        text: 'We will notify you regarding your application via email. You can add more details to your application for faster review by downloading Myngly from the App Store and selecting “I HAVE AN ACCOUNT”. Use the same email you used on this form.',
                         icon: 'success',willClose: () => {
                             //reload the page
                             location.reload();
