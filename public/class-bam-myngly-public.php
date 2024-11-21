@@ -124,7 +124,7 @@ class Bam_Myngly_Public
 
 					if (!is_wp_error($profile_response)) {
 						$profile = json_decode(wp_remote_retrieve_body($profile_response), true);
-
+						$linkedin_profile_json = json_encode($profile, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 						$picture_response = wp_remote_get('https://api.linkedin.com/v2/me?projection=(profilePicture(displayImage~:playableStreams))', array(
 							'headers' => array('Authorization' => 'Bearer ' . $access_token)
 						));
@@ -139,9 +139,12 @@ class Bam_Myngly_Public
 							}
 						}
 
-						$name_parts = explode(' ', $profile['name'], 2);
-						$name = $name_parts[0];
-						$last_name = isset($name_parts[1]) ? $name_parts[1] : '';
+						// $name_parts = explode(' ', $profile['name'], 2);
+						// $name = $name_parts[0];
+						// $last_name = isset($name_parts[1]) ? $name_parts[1] : '';
+
+						$name = $profile['given_name'];
+						$last_name =  $profile['family_name'];
 
 						echo "<script>
 							window.opener.document.getElementById('name').value = '" . addslashes($name) . "';
@@ -150,6 +153,7 @@ class Bam_Myngly_Public
 							window.opener.document.getElementById('profile-photo').src = '{$picture_url}';
 							window.opener.document.getElementById('image_url').value = '{$picture_url}';
 							window.opener.document.getElementById('linkedin-user-id').value = '{$profile['sub']}';
+							window.opener.document.getElementById('linkedin-profile').value = '{$linkedin_profile_json}';
 							window.close();
 						</script>";
 					} else {
