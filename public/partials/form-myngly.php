@@ -1,3 +1,13 @@
+<div id="div_title">
+<h2 id="title">Become a Member!</h2>
+<p id="sub-title">Join Texas Young Professionals today and gain access to exclusive events, networking opportunities, and career-building tools!<br>
+By filling out this form, you'll automatically create your Myngly profile, giving you even more ways to connect with like-minded professionals.<br>
+Start your journey with TYP and Myngly now!
+</p>
+</div>
+
+<br>
+
 <form id="myngly-form" method="POST" class="form-grid">
 
     <!-- Profile Picture and Image Upload Button (Centered at the top) -->

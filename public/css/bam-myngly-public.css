@@ -78,3 +78,19 @@ button.btn {
     from { background-color: #ffdddd; }
     to { background-color: #ff6666; }
 }
+
+#div_title {
+    text-align: center;
+}
+#title {
+    color: var(--e-global-color-4a28daa);
+    font-family: "Frank Ruhl Libre", Sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+}
+
+#subtitle {
+    font-family: "Montserrat", Sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+}
