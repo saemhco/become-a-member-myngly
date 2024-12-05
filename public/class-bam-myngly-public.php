@@ -70,7 +70,8 @@ class Bam_Myngly_Public
 			'linkedinState' => wp_create_nonce('linkedin_oauth_state'),
 			'linkedinAccessToken' => isset($_SESSION['linkedin_access_token']) ? $_SESSION['linkedin_access_token'] : '', // Pass the token to JavaScript
 			'uploadUrl' => admin_url('admin-ajax.php'),
-			'authToken' => wp_create_nonce('wp_rest')
+			'authToken' => wp_create_nonce('wp_rest'),
+			'pluginUrl' => plugin_dir_url(__FILE__), // Pass the plugin base URL
 		));
 	}
 

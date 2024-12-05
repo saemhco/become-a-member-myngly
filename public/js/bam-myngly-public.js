@@ -308,7 +308,7 @@
                     if (data.code === 100) {
                         if (data.errors?.phone_number) {
                             Swal.fire({
-                                imageUrl: '/wp-content/plugins/become-a-member-myngly/public/partials/assets/images/img-alert.png',
+                                imageUrl: apiConfig.pluginUrl + 'partials/assets/images/img-alert.png',
                                 imageHeight: 100,
                                 imageAlt: 'Alert icon',
                                 html: `
@@ -361,7 +361,7 @@
 
                         if (data.errors?.email) {
                             Swal.fire({
-                                imageUrl: '/wp-content/plugins/become-a-member-myngly/public/partials/assets/images/img-alert.png',
+                                imageUrl: apiConfig.pluginUrl + 'partials/assets/images/img-alert.png',
                                 imageHeight: 100,
                                 imageAlt: 'Email Alert Icon',
                                 html: `
@@ -536,7 +536,7 @@
                 else {
                     // Show success message
                     Swal.fire({
-                        imageUrl: '/wp-content/plugins/become-a-member-myngly/public/partials/assets/images/img-success.png', // Update to the success icon
+                        imageUrl: apiConfig.pluginUrl + 'partials/assets/images/img-success.png',
                         imageHeight: 100,
                         imageAlt: 'Success Icon',
                         html: `
