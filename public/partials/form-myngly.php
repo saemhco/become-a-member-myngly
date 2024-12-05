@@ -177,6 +177,6 @@ Start your journey with TYP and Myngly now!
 
     <!-- Submit Button (Full width) -->
     <div class="text-center" style="grid-column: span 2;">
-        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+        <button type="submit" class="btn-submit-custom">Submit</button>
     </div><br>
 </form>

@@ -17,12 +17,12 @@
 /* Responsive - One column layout on small screens */
 @media (max-width: 768px) {
     .form-grid {
-        grid-template-columns: 1fr !important; /* Forzar una sola columna */
+        grid-template-columns: 1fr !important; 
         gap: 15px;
     }
 
     .form-grid .form-group {
-        grid-column: 1 / -1 !important; /* Extiende cada grupo de formulario a toda la fila */
+        grid-column: 1 / -1 !important; 
     }
 
     .form-grid button {
@@ -70,14 +70,6 @@ button.btn {
     text-align: center;
 }
 
-.highlight {
-    animation: blink 1s ease-in-out 0.5s infinite alternate;
-}
-
-@keyframes blink {
-    from { background-color: #ffdddd; }
-    to { background-color: #ff6666; }
-}
 
 #div_title {
     text-align: center;
@@ -93,4 +85,52 @@ button.btn {
     font-family: "Montserrat", Sans-serif;
     font-size: 16px;
     font-weight: 400;
+}
+/* Custom SweetAlert button */
+.custom-swal-button {
+    background-color: #007bff; /* Blue background */
+    color: #fff; /* White text */
+    border: none; /* Remove borders */
+    border-radius: 30px; /* Rounded edges */
+    font-size: 14px; /* Adjust font size */
+    font-weight: bold;
+    padding: 10px 20px; /* Add padding */
+    text-transform: none; /* Disable uppercase */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition */
+}
+
+/* Hover effect for the button */
+.custom-swal-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    color: #fff; /* Keep text white */
+}
+
+.highlight {
+    border: 2px solid red;
+    box-shadow: 0 0 5px red;
+    animation: highlight-animation 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes blink {
+    from { background-color: #ffdddd; }
+    to { background-color: #ff6666; }
+}
+
+.btn-submit-custom {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-submit-custom:focus {
+    outline: none;
+}
+
+.btn-submit-custom:active {
+    transform: scale(0.98); /* Efecto visual al presionar */
 }
