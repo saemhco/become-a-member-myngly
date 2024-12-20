@@ -556,6 +556,9 @@
                                         </a>. 
                                         Select "I have an account" and log in using the same email address you provided on this form.
                                     </p>
+                                    <p>
+                                        Your application via email from team@myngly.info. Be sure to add this email to the safe senders list.
+                                    </p>
                                 </div>
                             </div>
                         `,
