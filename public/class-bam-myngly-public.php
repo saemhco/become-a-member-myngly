@@ -140,11 +140,11 @@ class Bam_Myngly_Public
 							}
 						}
 
-						// $name_parts = explode(' ', $profile['name'], 2);
-						// $name = $name_parts[0];
+						$name_parts = explode(' ', $profile['given_name'], 2);
+						$name = $name_parts[0];
 						// $last_name = isset($name_parts[1]) ? $name_parts[1] : '';
 
-						$name = $profile['given_name'];
+						//$name = $profile['given_name'];
 						$last_name =  $profile['family_name'];
 
 						echo "<script>
