@@ -36,7 +36,7 @@ Start your journey with TYP and Myngly now!
 
     <!-- Name -->
     <div class="form-group">
-        <label for="name">Name *</label>
+        <label for="name">First name *</label>
         <input type="text" name="name" id="name" placeholder="Enter your name" class="form-control" required>
     </div>
 
